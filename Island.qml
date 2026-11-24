@@ -20,7 +20,7 @@ Item {
     required property var media
 
     property bool open: false
-    property bool wifiView: false
+    property string subView: ""
     property alias hitbox: hit
 
     readonly property var player: media.player
@@ -74,19 +74,21 @@ Item {
 
     focus: true
     Keys.onEscapePressed: {
-        if (root.wifiView) {
+        if (root.subView === "wifi") {
             if (wifiPanel.passwordSsid !== "") {
                 wifiPanel.passwordSsid = ""
             } else {
-                root.wifiView = false
+                root.subView = ""
             }
+        } else if (root.subView === "reading") {
+            root.subView = ""
         } else {
             root.open = false
         }
     }
 
-    onWifiViewChanged: {
-        if (open && !wifiView) forceActiveFocus()
+    onSubViewChanged: {
+        if (open && subView === "") forceActiveFocus()
     }
 
     onOpenChanged: {
@@ -95,7 +97,7 @@ Item {
             forceActiveFocus()
             refreshAll()
         } else {
-            wifiView = false
+            subView = ""
             wifiPanel.reset()
         }
     }
@@ -111,7 +113,7 @@ Item {
         onTriggered: {
             root.wifi.refresh()
             root.bluetooth.refresh()
-            if (root.wifiView && root.wifi.enabled) root.wifi.scan(false)
+            if (root.subView === "wifi" && root.wifi.enabled) root.wifi.scan(false)
         }
     }
 
@@ -219,7 +221,11 @@ Item {
             x: (parent.width - width) / 2
             y: root.pad
             width: root.cfg.panelWidth - root.pad * 2
-            implicitHeight: root.wifiView ? wifiPanel.implicitHeight : mainCol.implicitHeight
+            implicitHeight: {
+                if (root.subView === "wifi") return wifiPanel.implicitHeight
+                if (root.subView === "reading") return readingPanel.implicitHeight
+                return mainCol.implicitHeight
+            }
             visible: root.p > 0.02
             enabled: root.open
 
@@ -227,9 +233,9 @@ Item {
                 id: mainCol
                 width: content.width
                 spacing: 12
-                opacity: root.wifiView ? 0 : 1
+                opacity: root.subView === "" ? 1 : 0
                 visible: opacity > 0.01
-                enabled: !root.wifiView
+                enabled: root.subView === ""
                 Behavior on opacity { NumberAnimation { duration: 160 } }
 
             // 0 — clock + battery
@@ -312,7 +318,7 @@ Item {
                     onClicked: root.wifi.toggle()
                     onIconClicked: {
                         root.wifi.scan(true)
-                        root.wifiView = true
+                        root.subView = "wifi"
                     }
                 }
                 Tile {
@@ -329,11 +335,14 @@ Item {
                     width: (tiles.width - tiles.spacing) / 2
                     height: 66
                     icon: "book"
+                    iconClickable: true
                     title: "Reading"
                     subtitle: root.reading.active ? ("Warm · " + root.reading.temperature + "K") : "Off"
+                    badgeTop: root.reading.active ? (root.reading.temperature + "K") : ""
                     active: root.reading.active
                     accent: root.accent
                     onClicked: root.reading.toggle()
+                    onIconClicked: root.subView = "reading"
                 }
                 Tile {
                     width: (tiles.width - tiles.spacing) / 2
@@ -392,11 +401,23 @@ Item {
                 width: content.width
                 wifi: root.wifi
                 accent: root.accent
-                opacity: root.wifiView ? 1 : 0
+                opacity: root.subView === "wifi" ? 1 : 0
                 visible: opacity > 0.01
-                enabled: root.wifiView
+                enabled: root.subView === "wifi"
                 Behavior on opacity { NumberAnimation { duration: 160 } }
-                onBack: root.wifiView = false
+                onBack: root.subView = ""
+            }
+
+            ReadingPanel {
+                id: readingPanel
+                width: content.width
+                reading: root.reading
+                accent: root.accent
+                opacity: root.subView === "reading" ? 1 : 0
+                visible: opacity > 0.01
+                enabled: root.subView === "reading"
+                Behavior on opacity { NumberAnimation { duration: 160 } }
+                onBack: root.subView = ""
             }
         }
     }

@@ -10,7 +10,11 @@ ShellRoot {
     BrightnessService { id: brightnessSvc }
     WifiService { id: wifiSvc }
     BluetoothService { id: bluetoothSvc }
-    ReadingService { id: readingSvc; temperature: config.readingTemperature }
+    ReadingService {
+        id: readingSvc
+        temperature: config.readingTemperature
+        onTemperatureCommitted: k => config.setReadingTemperature(k)
+    }
     MediaService { id: mediaSvc }
 
     Variants {

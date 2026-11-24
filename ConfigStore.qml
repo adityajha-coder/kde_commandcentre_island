@@ -54,6 +54,29 @@ Scope {
         }
     }
 
+    function setReadingTemperature(k) {
+        const clamped = Math.max(1000, Math.min(6500, Math.round(k)))
+        if (values.readingTemperature === clamped) return
+        const next = {}
+        for (const key in defaults) next[key] = values[key]
+        next.readingTemperature = clamped
+        values = next
+        saveTimer.restart()
+    }
+
+    Timer {
+        id: saveTimer
+        interval: 400
+        onTriggered: {
+            const json = JSON.stringify(root.values, null, 2)
+            Quickshell.execDetached([
+                "sh", "-c",
+                "mkdir -p \"$(dirname \"$1\")\" && printf '%s\\n' \"$2\" > \"$1\"",
+                "_", root.file, json
+            ])
+        }
+    }
+
     FileView {
         path: root.file
         watchChanges: true
