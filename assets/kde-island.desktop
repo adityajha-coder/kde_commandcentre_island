@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=KDE Island
+Comment=Dynamic Island command center for KDE Plasma
+Exec=quickshell -c kde-island
+Icon=preferences-system
+Terminal=false
+Categories=Utility;KDE;Qt;
+X-KDE-autostart-after=panel
+

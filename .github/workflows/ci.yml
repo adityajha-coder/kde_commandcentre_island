@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON configuration
+        run: |
+          python3 -m json.tool config.default.json > /dev/null
+          echo "config.default.json is valid JSON."
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint Shell Scripts
+        run: |
+          shellcheck install.sh
+          shellcheck scripts/reading-mode.sh
+
+      - name: Test CMake Configure and Installation
+        run: |
+          mkdir build
+          cmake -B build -S . \
+            -DCMAKE_INSTALL_PREFIX=/tmp/kde-island-test \
+            -DINSTALL_AUTOSTART=ON
+          cmake --install build
+          test -f /tmp/kde-island-test/share/quickshell/kde-island/shell.qml
+          test -f /tmp/kde-island-test/share/quickshell/kde-island/Island.qml
+          test -f /tmp/kde-island-test/etc/xdg/autostart/kde-island.desktop
+          echo "CMake build and install verified successfully."
+
+      - name: Validate Desktop Entry
+        run: |
+          sudo apt-get install -y desktop-file-utils
+          desktop-file-validate assets/kde-island.desktop
+
