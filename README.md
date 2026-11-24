@@ -37,9 +37,9 @@ The widget uses the Wayland layer-shell protocol with dynamic input region maski
   - Dismisses instantly when pressing Escape or clicking anywhere outside the panel.
 
 - **System Quick Toggles**:
-  - **Wi-Fi**: Toggles wireless radio on and off; displays current active SSID via NetworkManager.
-  - **Bluetooth**: Toggles Bluetooth adapter power; displays connected device name via BlueZ.
-  - **Reading Mode**: Activates a warm screen tint via KDE Night Light (constant color temperature mode) while preserving your previous night color settings for restoration when turned off.
+  - **Wi-Fi**: Click the tile to toggle wireless radio on and off; displays the active SSID and live `↓`/`↑` throughput speeds. Click the Wi-Fi icon disc to open the network switcher (scan networks, view signal strength, connect, and enter passwords inline).
+  - **Bluetooth**: Click the tile to toggle Bluetooth adapter power; displays the connected device name and battery percentage via BlueZ. Click the Bluetooth icon disc to open the device switcher (connect/disconnect paired devices, view per-device battery % and type, and forget/re-pair on key errors).
+  - **Reading Mode**: Click the tile to toggle a warm screen tint via KDE Night Light (preserving your previous night color settings for restoration when turned off). Click the Reading icon disc to customize color temperature with a 1500K–6500K slider and quick presets (`Soft`, `Reading`, `Warm`, `Candle`), automatically saved to `config.json`.
   - **System Settings**: One-click shortcut to launch the native KDE System Settings app.
 
 - **Precision Sliders**:
@@ -105,6 +105,8 @@ quickshell -c kde-island & disown
 |---|---|
 | Hover the pill | Pill expands slightly |
 | Click the pill | Opens the command center panel |
+| Click Wi-Fi / Bluetooth / Reading icon disc | Opens the Wi-Fi, Bluetooth, or Reading sub-panel |
+| Press Escape in a sub-panel | Returns to the main panel (or closes password prompt) |
 | Press Escape or click outside | Closes the panel |
 | Drag or scroll over volume slider | Changes output volume |
 | Click volume icon | Toggles mute |
