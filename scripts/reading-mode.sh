@@ -5,32 +5,39 @@
 
 STATE="${XDG_CACHE_HOME:-$HOME/.cache}/kde-island/reading.prev"
 
-kw() { kwriteconfig6 --file kwinrc --group NightColor --key "$1" "$2"; }
-kr() { kreadconfig6 --file kwinrc --group NightColor --key "$1" --default "$2"; }
+kw() { kwriteconfig6 --notify --file kwinrc --group NightColor --key "$1" "$2"; }
+kwb() { kwriteconfig6 --notify --file kwinrc --group NightColor --key "$1" --type bool "$2"; }
+kdel() { kwriteconfig6 --notify --file kwinrc --group NightColor --key "$1" --delete ''; }
+kr() { kreadconfig6 --file kwinrc --group NightColor --key "$1" --default ""; }
 reload() {
     busctl --user call org.kde.KWin /KWin org.kde.KWin reconfigure >/dev/null 2>&1 \
-        || qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1
+        || qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 \
+        || qdbus-qt6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 \
+        || true
 }
 
 case "$1" in
     on)
         mkdir -p "$(dirname "$STATE")"
         if [ ! -f "$STATE" ]; then
-            printf '%s\n%s\n%s\n' "$(kr Active false)" "$(kr Mode Automatic)" "$(kr NightTemperature 4500)" > "$STATE"
+            printf '%s\n%s\n%s\n' "$(kr Active)" "$(kr Mode)" "$(kr NightTemperature)" > "$STATE"
         fi
-        kw Active true
+        kwb Active true
         kw Mode Constant
         kw NightTemperature "${2:-3600}"
         reload
         ;;
     off)
         if [ -f "$STATE" ]; then
-            kw Active "$(sed -n 1p "$STATE")"
-            kw Mode "$(sed -n 2p "$STATE")"
-            kw NightTemperature "$(sed -n 3p "$STATE")"
+            prev_active=$(sed -n 1p "$STATE")
+            prev_mode=$(sed -n 2p "$STATE")
+            prev_temp=$(sed -n 3p "$STATE")
+            if [ -n "$prev_active" ]; then kwb Active "$prev_active"; else kdel Active; fi
+            if [ -n "$prev_mode" ]; then kw Mode "$prev_mode"; else kdel Mode; fi
+            if [ -n "$prev_temp" ]; then kw NightTemperature "$prev_temp"; else kdel NightTemperature; fi
             rm -f "$STATE"
         else
-            kw Active false
+            kwb Active false
         fi
         reload
         ;;
