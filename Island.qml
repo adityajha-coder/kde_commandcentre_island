@@ -151,7 +151,7 @@ Item {
             onClicked: if (!root.open) root.open = true
         }
 
-        // ── Pill state: music live-activity ───────────────────────────
+        // Pill state: music live-activity
         Item {
             width: parent.width
             height: root.cfg.pillHeight
@@ -189,7 +189,7 @@ Item {
             }
         }
 
-        // ── Panel state ──────────────────────────────────────────────
+        // Panel state
         Column {
             id: content
 
