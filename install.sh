@@ -1,18 +1,18 @@
 #!/bin/sh
-# Installs KDE Island into ~/.config/quickshell/kde-island and creates a default config.
+# Installs KDE Island into ~/.config/quickshell/kde_commandcentre_island and creates a default config.
 # Usage: ./install.sh [--autostart]
 set -e
 
 SRC="$(cd "$(dirname "$0")" && pwd)"
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}"
-DEST="$CFG/quickshell/kde-island"
+DEST="$CFG/quickshell/kde_commandcentre_island"
 
-mkdir -p "$DEST" "$CFG/kde-island"
+mkdir -p "$DEST" "$CFG/kde_commandcentre_island"
 cp -r "$SRC"/shell.qml "$SRC"/ConfigStore.qml "$SRC"/Island.qml \
       "$SRC"/components "$SRC"/services "$SRC"/scripts "$SRC"/assets "$DEST"/
 
-if [ ! -f "$CFG/kde-island/config.json" ]; then
-    cp "$SRC/config.default.json" "$CFG/kde-island/config.json"
+if [ ! -f "$CFG/kde_commandcentre_island/config.json" ]; then
+    cp "$SRC/config.default.json" "$CFG/kde_commandcentre_island/config.json"
     echo "Created $CFG/kde-island/config.json"
 fi
 

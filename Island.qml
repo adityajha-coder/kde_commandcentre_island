@@ -20,6 +20,7 @@ Item {
     required property var media
 
     property bool open: false
+    property bool wifiView: false
     property alias hitbox: hit
 
     readonly property var player: media.player
@@ -72,15 +73,36 @@ Item {
     }
 
     focus: true
-    Keys.onEscapePressed: root.open = false
+    Keys.onEscapePressed: {
+        if (root.wifiView) {
+            if (wifiPanel.passwordSsid !== "") {
+                wifiPanel.passwordSsid = ""
+            } else {
+                root.wifiView = false
+            }
+        } else {
+            root.open = false
+        }
+    }
+
+    onWifiViewChanged: {
+        if (open && !wifiView) forceActiveFocus()
+    }
 
     onOpenChanged: {
+        wifi.active = open
         if (open) {
             forceActiveFocus()
             refreshAll()
+        } else {
+            wifiView = false
+            wifiPanel.reset()
         }
     }
-    Component.onCompleted: refreshAll()
+    Component.onCompleted: {
+        wifi.active = open
+        refreshAll()
+    }
 
     Timer {
         running: root.open
@@ -89,6 +111,7 @@ Item {
         onTriggered: {
             root.wifi.refresh()
             root.bluetooth.refresh()
+            if (root.wifiView && root.wifi.enabled) root.wifi.scan(false)
         }
     }
 
@@ -190,15 +213,24 @@ Item {
         }
 
         // Panel state
-        Column {
+        Item {
             id: content
 
             x: (parent.width - width) / 2
             y: root.pad
             width: root.cfg.panelWidth - root.pad * 2
-            spacing: 12
+            implicitHeight: root.wifiView ? wifiPanel.implicitHeight : mainCol.implicitHeight
             visible: root.p > 0.02
             enabled: root.open
+
+            Column {
+                id: mainCol
+                width: content.width
+                spacing: 12
+                opacity: root.wifiView ? 0 : 1
+                visible: opacity > 0.01
+                enabled: !root.wifiView
+                Behavior on opacity { NumberAnimation { duration: 160 } }
 
             // 0 — clock + battery
             Item {
@@ -268,11 +300,20 @@ Item {
                     width: (tiles.width - tiles.spacing) / 2
                     height: 66
                     icon: "wifi"
+                    iconClickable: true
                     title: "Wi-Fi"
                     subtitle: root.wifi.enabled ? (root.wifi.ssid !== "" ? root.wifi.ssid : "Not connected") : "Off"
+                    badgeTop: (root.wifi.enabled && (root.wifi.ssid !== "" || root.wifi.iface !== "") && root.wifi.hasSpeed)
+                        ? ("↓ " + root.wifi.formatSpeed(root.wifi.rxSpeed)) : ""
+                    badgeBottom: (root.wifi.enabled && (root.wifi.ssid !== "" || root.wifi.iface !== "") && root.wifi.hasSpeed)
+                        ? ("↑ " + root.wifi.formatSpeed(root.wifi.txSpeed)) : ""
                     active: root.wifi.enabled
                     accent: root.accent
                     onClicked: root.wifi.toggle()
+                    onIconClicked: {
+                        root.wifi.scan(true)
+                        root.wifiView = true
+                    }
                 }
                 Tile {
                     width: (tiles.width - tiles.spacing) / 2
@@ -343,6 +384,19 @@ Item {
                 transform: Translate { y: (1 - root.rev(4)) * 14 }
                 player: root.player
                 accent: root.accent
+            }
+            }
+
+            WifiPanel {
+                id: wifiPanel
+                width: content.width
+                wifi: root.wifi
+                accent: root.accent
+                opacity: root.wifiView ? 1 : 0
+                visible: opacity > 0.01
+                enabled: root.wifiView
+                Behavior on opacity { NumberAnimation { duration: 160 } }
+                onBack: root.wifiView = false
             }
         }
     }
