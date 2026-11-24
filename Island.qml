@@ -337,7 +337,7 @@ Item {
                     icon: "book"
                     iconClickable: true
                     title: "Reading"
-                    subtitle: root.reading.active ? ("Warm · " + root.reading.temperature + "K") : "Off"
+                    subtitle: root.reading.active ? "Warm" : "Off"
                     badgeTop: root.reading.active ? (root.reading.temperature + "K") : ""
                     active: root.reading.active
                     accent: root.accent
@@ -388,7 +388,7 @@ Item {
             // 4 — media player
             MediaCard {
                 width: content.width
-                height: 112
+                height: 118
                 opacity: root.rev(4)
                 transform: Translate { y: (1 - root.rev(4)) * 14 }
                 player: root.player

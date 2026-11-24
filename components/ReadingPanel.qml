@@ -14,10 +14,10 @@ Column {
     readonly property real warmth: Math.max(0, Math.min(1, (maxTemp - reading.temperature) / (maxTemp - minTemp)))
 
     readonly property var presets: [
-        { label: "Candle", k: 2000 },
-        { label: "Warm", k: 2800 },
+        { label: "Soft", k: 4500 },
         { label: "Reading", k: 3600 },
-        { label: "Soft", k: 4500 }
+        { label: "Warm", k: 2800 },
+        { label: "Candle", k: 2000 }
     ]
 
     spacing: 12

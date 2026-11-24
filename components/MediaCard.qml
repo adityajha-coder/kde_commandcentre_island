@@ -56,7 +56,7 @@ Rectangle {
 
     Text {
         x: 100
-        y: 14
+        y: 12
         width: card.width - 100 - 16
         text: card.has ? (card.player.trackTitle || "Unknown title") : "Nothing playing"
         color: "#ffffff"
@@ -67,7 +67,7 @@ Rectangle {
 
     Text {
         x: 100
-        y: 34
+        y: 33
         width: card.width - 100 - 16
         text: card.has ? (card.player.trackArtist || card.player.identity || "") : "Play something to see it here"
         color: Qt.rgba(1, 1, 1, 0.55)
@@ -76,8 +76,9 @@ Rectangle {
     }
 
     Row {
+        id: controlsRow
         x: 100
-        y: 48
+        y: 54
         spacing: 4
 
         IconButton {
@@ -92,7 +93,7 @@ Rectangle {
 
         IconButton {
             anchors.verticalCenter: parent.verticalCenter
-            size: 36
+            size: 34
             glyph: 16
             icon: (card.has && card.player.isPlaying) ? "pause" : "play"
             filled: true
@@ -115,7 +116,7 @@ Rectangle {
     Text {
         anchors.right: parent.right
         anchors.rightMargin: 16
-        y: 58
+        anchors.verticalCenter: controlsRow.verticalCenter
         visible: card.has && card.player.length > 0
         text: card.fmt(card.has ? card.player.position : 0) + " / " + card.fmt(card.has ? card.player.length : 0)
         color: Qt.rgba(1, 1, 1, 0.45)
@@ -125,7 +126,7 @@ Rectangle {
     Item {
         id: seek
         x: 16
-        y: card.height - 26
+        y: card.height - 24
         width: card.width - 32
         height: 16
 
