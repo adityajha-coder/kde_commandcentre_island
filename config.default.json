@@ -1,0 +1,15 @@
+{
+  "monitor": "",
+  "topMargin": 8,
+  "pillWidth": 124,
+  "pillHeight": 32,
+  "panelWidth": 392,
+  "cornerRadius": 32,
+  "tint": "#0c0c10",
+  "glassOpacity": 0.8,
+  "accent": "#f2f2f7",
+  "borderGlow": 0.1,
+  "animationSpeed": 1.0,
+  "use24h": true,
+  "readingTemperature": 3600
+}

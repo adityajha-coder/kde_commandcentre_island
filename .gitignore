@@ -1,0 +1,17 @@
+# Cache and local runtime state
+reading.prev
+*.prev
+.cache/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Extras
+README.md
+setup.md
+
