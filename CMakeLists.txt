@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(kde-island
     VERSION 0.1.0
     DESCRIPTION "Dynamic Island command center for KDE Plasma on Wayland using Quickshell"
-    HOMEPAGE_URL "https://github.com/adityajha-coder/kde-island"
+    HOMEPAGE_URL "https://github.com/adityajha-coder/kde_commandcentre_island"
     LANGUAGES NONE
 )
 
