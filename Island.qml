@@ -80,7 +80,7 @@ Item {
             } else {
                 root.subView = ""
             }
-        } else if (root.subView === "reading") {
+        } else if (root.subView === "reading" || root.subView === "bluetooth") {
             root.subView = ""
         } else {
             root.open = false
@@ -99,6 +99,7 @@ Item {
         } else {
             subView = ""
             wifiPanel.reset()
+            btPanel.reset()
         }
     }
     Component.onCompleted: {
@@ -114,6 +115,7 @@ Item {
             root.wifi.refresh()
             root.bluetooth.refresh()
             if (root.subView === "wifi" && root.wifi.enabled) root.wifi.scan(false)
+            if (root.subView === "bluetooth" && root.bluetooth.enabled) root.bluetooth.loadDevices()
         }
     }
 
@@ -223,6 +225,7 @@ Item {
             width: root.cfg.panelWidth - root.pad * 2
             implicitHeight: {
                 if (root.subView === "wifi") return wifiPanel.implicitHeight
+                if (root.subView === "bluetooth") return btPanel.implicitHeight
                 if (root.subView === "reading") return readingPanel.implicitHeight
                 return mainCol.implicitHeight
             }
@@ -325,11 +328,17 @@ Item {
                     width: (tiles.width - tiles.spacing) / 2
                     height: 66
                     icon: "bluetooth"
+                    iconClickable: true
                     title: "Bluetooth"
                     subtitle: root.bluetooth.enabled ? (root.bluetooth.device !== "" ? root.bluetooth.device : "On") : "Off"
+                    badgeTop: (root.bluetooth.enabled && root.bluetooth.battery >= 0) ? (root.bluetooth.battery + "%") : ""
                     active: root.bluetooth.enabled
                     accent: root.accent
                     onClicked: root.bluetooth.toggle()
+                    onIconClicked: {
+                        root.bluetooth.loadDevices()
+                        root.subView = "bluetooth"
+                    }
                 }
                 Tile {
                     width: (tiles.width - tiles.spacing) / 2
@@ -404,6 +413,18 @@ Item {
                 opacity: root.subView === "wifi" ? 1 : 0
                 visible: opacity > 0.01
                 enabled: root.subView === "wifi"
+                Behavior on opacity { NumberAnimation { duration: 160 } }
+                onBack: root.subView = ""
+            }
+
+            BluetoothPanel {
+                id: btPanel
+                width: content.width
+                bluetooth: root.bluetooth
+                accent: root.accent
+                opacity: root.subView === "bluetooth" ? 1 : 0
+                visible: opacity > 0.01
+                enabled: root.subView === "bluetooth"
                 Behavior on opacity { NumberAnimation { duration: 160 } }
                 onBack: root.subView = ""
             }
